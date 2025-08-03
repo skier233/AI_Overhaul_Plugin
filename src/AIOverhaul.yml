@@ -1,0 +1,49 @@
+name: AI Overhaul
+description: StashAI Server integration and AI-powered enhancements for Stash
+version: 2.0.0
+ui:
+  javascript:
+  - index-browser.js
+  - AISettingsV2.js
+  - AIResultsOverlay.js
+  - AIResultsOverlayGalleries.js
+  - AIInteractions.js
+  - AIInteractionsTracker.js
+  csp:
+    connect-src:
+      - http://localhost:8080
+      - https://localhost:8443
+      - http://*:8080
+      - https://*:8443
+      - http://10.0.0.0/8:8080
+      - http://192.168.0.0/16:8080
+      - http://172.16.0.0/12:8080
+exec:
+  - python
+  - "{pluginDir}/ai_database_manager.py"
+interface: raw
+tasks:
+  - name: Create AI Database
+    description: Creates the SQLite database for storing AI interaction data
+    defaultArgs:
+      mode: create_db
+  - name: Import from JSON
+    description: Imports interaction data from the most recent JSON export file
+    defaultArgs:
+      mode: import_json
+  - name: Export to JSON
+    description: Exports all interaction data from database to JSON file
+    defaultArgs:
+      mode: export_json
+  - name: Sync Database
+    description: Syncs database with localStorage data (import + export)
+    defaultArgs:
+      mode: sync
+  - name: Database Statistics
+    description: Shows statistics about the interaction database
+    defaultArgs:
+      mode: stats
+  - name: Cleanup Old Data
+    description: Removes interaction data older than 30 days
+    defaultArgs:
+      mode: cleanup

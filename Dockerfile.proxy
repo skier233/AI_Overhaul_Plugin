@@ -1,0 +1,27 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy application files
+COPY dev-proxy.js ./
+COPY dist/ ./dist/
+COPY test_integration.html ./
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S proxy -u 1001 -G nodejs
+
+USER proxy
+
+EXPOSE 9999
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:9999/proxy/health || exit 1
+
+CMD ["node", "dev-proxy.js"]

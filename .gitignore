@@ -1,0 +1,5 @@
+/.DS_Store
+/.env.example
+/ai_interactions.db
+/dist
+/yarn.lock

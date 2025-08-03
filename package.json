@@ -1,0 +1,29 @@
+{
+  "name": "ai-overhaul",
+  "version": "2.0.0",
+  "main": "index.js",
+  "author": "AIOverhaul",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "compile:ts": "yarn tsc",
+    "copy:yml": "cp src/AIOverhaul.yml dist/",
+    "build": "yarn run compile:ts && yarn run copy:yml",
+    "build-settings": "npx tsc src/AISettings.tsx --target ES2015 --lib ES2017,DOM --jsx react --outDir dist --skipLibCheck",
+    "dev-proxy": "node dev-proxy.js",
+    "start": "./start-stash-ai-proxy.sh",
+    "proxy": "node dev-proxy.js --port=10000 --stash-ai-url=http://localhost:8080 --stash-url=http://localhost:9999",
+    "proxy:docker": "docker-compose -f docker-compose.proxy.yml up --build",
+    "test": "node dev-proxy.js --port=9998",
+    "health": "curl -s http://localhost:10000/proxy/health | jq ."
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^2.0.9"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
+    "cpx": "^1.5.0",
+    "typescript": "^5.8.3"
+  }
+}

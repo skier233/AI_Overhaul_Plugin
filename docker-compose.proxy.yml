@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  stash-ai-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
+    ports:
+      - "${STASH_AI_PROXY_PORT:-9999}:9999"
+    environment:
+      - STASH_AI_SERVER_URL=${STASH_AI_SERVER_URL:-http://stash-ai-server:8080}
+      - STASH_SERVER_URL=${STASH_SERVER_URL:-http://host.docker.internal:9999}
+      - STASH_AI_PROXY_PORT=9999
+    depends_on:
+      - stash-ai-server
+    networks:
+      - stash-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9999/proxy/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Include StashAI Server services
+  stash-ai-server:
+    extends:
+      file: ../../StashAIServer/docker-compose.yml
+      service: stash-ai-server
+    networks:
+      - stash-ai-network
+
+  visage:
+    extends:
+      file: ../../StashAIServer/docker-compose.yml
+      service: visage
+    networks:
+      - stash-ai-network
+
+networks:
+  stash-ai-network:
+    driver: bridge
